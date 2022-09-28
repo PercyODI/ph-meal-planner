@@ -13,6 +13,7 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: Get PhMealPlanner droplets to configure
+        id: get_droplet_ids
         run: >-
           echo "::set-output name=DROPLET_IPS::$(
             doctl compute droplet list --tag-name phmealplanner --format PublicIPv4 | 
@@ -20,4 +21,4 @@ jobs:
             sed 's/,$/\n/'
           )"
       - name: Test IP List
-        run: echo ${{ DROPLET_IPS }}
+        run: echo ${{ steps.get_droplet_ids.outputs.DROPLET_IPS }}
