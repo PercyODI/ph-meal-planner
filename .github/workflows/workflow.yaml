@@ -1,0 +1,21 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  configure-infra:
+    name: Configure PhMealPlanner Infrastructure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Get PhMealPlanner droplets to configure
+        run: >-
+          echo "::set-output name=DROPLET_IPS::$(
+            doctl compute droplet list --tag-name phmealplanner --format PublicIPv4 | 
+            awk 'NR!=1{print $1}' | 
+            sed 's/,$/\n/'
+          )"
