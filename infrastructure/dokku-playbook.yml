@@ -1,0 +1,32 @@
+---
+- name: Setup Dokku Apps
+  hosts: all
+  roles:
+    - dokku_bot.ansible_dokku
+  vars:
+    dokku_plugins:
+      - name: postgres
+        url: https://github.com/dokku/dokku-postgres.git
+      - name: letsencrypt
+        url: https://github.com/dokku/dokku-letsencrypt.git
+  tasks:
+    - name: create api app
+      dokku_app:
+        app: &apiappname phmealplannerapi
+        stage: present
+    - name: Enable letsencrypt plugin
+      dokku_letsencrypt:
+        app: *apiappname
+        state: present
+    - name: phmealplanner postgres create
+      dokku_service_create:
+        name: &apidbname phmealplannerpsql
+        service: postgres
+        state: present
+    - name: phmealplanner postgres link
+      dokku_service_link:
+        app: *apiappname
+        name: *apidbname
+        service: postgres
+        state: present
+    
