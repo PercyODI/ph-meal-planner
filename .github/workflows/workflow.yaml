@@ -19,3 +19,5 @@ jobs:
             awk 'NR!=1{print $1}' | 
             sed 's/,$/\n/'
           )"
+      - name: Test IP List
+        run: echo ${{ DROPLET_IPS }}
